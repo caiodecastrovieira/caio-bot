@@ -1,5 +1,8 @@
 window.onload = function () {
-  const messages = document.getElementById("messages");
+  const loading = document.createElement("div");
+loading.className = "msg bot";
+loading.innerText = "CAIO está pensando...";
+messages.appendChild(loading);
 
   messages.innerHTML += `
     <div class="msg">
