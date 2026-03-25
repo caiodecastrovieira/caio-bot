@@ -294,7 +294,56 @@
 
   <script src="app.js"></script>
   <script>
-    // Fallback: garantir envio com Enter caso app.js não implemente
+    // ── i18n: placeholder e aria-label por idioma ──────────────────────────
+    const PLACEHOLDERS = {
+      'pt': 'Pergunte algo…',
+      'en': 'Ask me anything…',
+      'es': 'Pregunta algo…',
+      'fr': 'Posez une question…',
+      'de': 'Stell eine Frage…',
+      'it': 'Fai una domanda…',
+      'ja': '何か聞いてください…',
+      'zh': '请输入您的问题…',
+      'ko': '질문을 입력하세요…',
+      'ru': 'Задайте вопрос…',
+      'ar': '…اكتب سؤالك',
+      'hi': 'कुछ पूछें…',
+      'nl': 'Stel een vraag…',
+      'pl': 'Zadaj pytanie…',
+      'tr': 'Bir şey sor…',
+      'sv': 'Ställ en fråga…',
+      'default': 'Ask me anything…',
+    };
+
+    function detectLang() {
+      // navigator.languages retorna array ordenado por preferência
+      const langs = navigator.languages?.length
+        ? navigator.languages
+        : [navigator.language || 'en'];
+
+      for (const lang of langs) {
+        const code = lang.split('-')[0].toLowerCase(); // "pt-BR" → "pt"
+        if (PLACEHOLDERS[code]) return code;
+      }
+      return 'default';
+    }
+
+    function applyPlaceholder() {
+      const input = document.getElementById('input');
+      const lang  = detectLang();
+      const text  = PLACEHOLDERS[lang];
+
+      input.placeholder = text;
+      input.setAttribute('aria-label', text);
+
+      // Ajusta direção para idiomas RTL
+      const rtl = ['ar', 'he', 'fa', 'ur'];
+      input.dir = rtl.includes(lang) ? 'rtl' : 'ltr';
+    }
+
+    applyPlaceholder();
+
+    // ── Envio com Enter ────────────────────────────────────────────────────
     document.getElementById('input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
