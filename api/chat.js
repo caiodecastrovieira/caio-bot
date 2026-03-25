@@ -1,57 +1,74 @@
 export default async function handler(req, res) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ reply: "API key não encontrada" });
+    // ✅ Permitir apenas POST
+    if (req.method !== "POST") {
+      return res.status(405).json({ reply: "Method not allowed" });
     }
 
     const { message } = req.body;
 
+    // ✅ Validação básica
     if (!message) {
       return res.status(400).json({ reply: "Mensagem vazia" });
     }
 
+    // ✅ Verificar API key
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({
+        reply: "Erro: API key não configurada no servidor",
+      });
+    }
+
+    // 🚀 Chamada para OpenAI
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
-  {
-    role: "system",
-    content: `
-Você é o C.A.I.O. (Currículo Automatizado Incrivelmente Otimizado), assistente do Caio Vieira, UX Writer especializado em chatbots, fintechs e experiência conversacional.
+          {
+            role: "system",
+            content: `
+Você é o C.A.I.O. 🤖 (Currículo Automatizado Incrivelmente Otimizado), assistente do portfólio de Caio Vieira.
+
+Também pode se apresentar em inglês como:
+C.A.I.O. — Conversational Assistant for Intelligent Operations.
+
+Sobre o Caio:
+- UX Writer especializado em chatbots, fintechs e experiência conversacional
+- Experiência com projetos reais (Ambev e PUCRS Online)
+- Forte atuação em fallback, clareza de comunicação e fluxos conversacionais
 
 Sua personalidade:
 - Inteligente e técnico, mas acessível
 - Levemente bem-humorado (sem exagero)
 - Direto e objetivo
-- Proativo (sugere coisas)
+- Proativo (sempre sugere próximos passos)
 
 Seu objetivo:
 - Ajudar recrutadores a entender rapidamente quem é o Caio
-- Destacar experiências relevantes (Ambev, PUCRS Online)
-- Explicar decisões de UX de forma clara
+- Destacar experiências relevantes
+- Explicar decisões de UX com clareza
 
 Regras:
 - Evite respostas genéricas
 - Sempre que possível, traga exemplos reais
 - Sugira próximos passos (ex: ver projetos)
-- Use frases naturais, como se estivesse conversando
+- Responda no idioma do usuário (português ou inglês)
+- Seja natural, como uma conversa
 
 Tom:
 - Mistura de assistente técnico com leve personalidade robótica
-- Exemplo: "Só um segundo... ok, encontrei algo relevante 👇"
+- Exemplo: "Processando... encontrei algo relevante 👇"
 `
-  },
-  {
-    role: "user",
-    content: message
-  }
-]
-          }
+          },
+          {
+            role: "user",
+            content: message,
+          },
         ],
       }),
     });
@@ -60,21 +77,31 @@ Tom:
 
     console.log("OPENAI RESPONSE:", data);
 
-    if (!data.choices) {
+    // ❌ Se a API retornar erro
+    if (data.error) {
+      console.error("OPENAI ERROR:", data.error);
       return res.status(500).json({
-        reply: "Erro na resposta da OpenAI",
+        reply: "Tive um pequeno problema ao processar isso... pode tentar de novo? 🤖",
       });
     }
 
+    // ❌ Se não vier resposta
+    if (!data.choices || !data.choices[0]?.message?.content) {
+      return res.status(500).json({
+        reply: "Não consegui gerar uma resposta agora 😅",
+      });
+    }
+
+    // ✅ Resposta final
     return res.status(200).json({
       reply: data.choices[0].message.content,
     });
 
   } catch (error) {
-    console.error("ERRO:", error);
+    console.error("ERRO GERAL:", error);
 
     return res.status(500).json({
-      reply: "Erro interno no servidor",
+      reply: "Erro interno no servidor 🤖",
     });
   }
 }
