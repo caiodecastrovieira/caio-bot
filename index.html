@@ -2,14 +2,75 @@
 <html>
 <head>
   <title>C.A.I.O.</title>
-  <style>
-    body { font-family: Arial; background: #0f172a; color: white; }
-    #chat { max-width: 600px; margin: auto; padding: 20px; }
-    .msg { margin: 10px 0; }
-    .user { text-align: right; }
-    input { width: 80%; padding: 10px; }
-    button { padding: 10px; }
-  </style>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    margin: 0;
+    padding: 0;
+  }
+
+  #chat {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  h2 {
+    color: white;
+  }
+
+  #messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .msg {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    line-height: 1.4;
+    font-size: 14px;
+  }
+
+  /* 🤖 BOT */
+  .bot {
+    background: #1e293b;
+    color: white;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  /* 👤 USUÁRIO */
+  .user {
+    background: #22c55e;
+    color: black;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  #input-area {
+    display: flex;
+    gap: 10px;
+  }
+
+  input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+  }
+
+  button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #22c55e;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
   <div id="chat">
