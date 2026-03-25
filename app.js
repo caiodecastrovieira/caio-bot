@@ -1,7 +1,7 @@
 window.onload = function () {
   const loading = document.createElement("div");
 loading.className = "msg bot";
-loading.innerText = "CAIO está pensando...";
+loading.innerText = "Huuum, deixa eu pensar...";
 messages.appendChild(loading);
 
   messages.innerHTML += `
