@@ -1,4 +1,20 @@
-async function send() {
+window.onload = function () {
+  const messages = document.getElementById("messages");
+
+  messages.innerHTML += `
+    <div class="msg">
+      Olá, humano 👋<br><br>
+      Eu sou o CAIO, assistente do portfólio do Caio Vieira.<br><br>
+      Posso te ajudar a entender a experiência dele, projetos e decisões de UX — de forma rápida e direta.<br><br>
+      Você pode falar comigo em português ou inglês, como preferir 🙂<br><br>
+      ---<br><br>
+      Hi there 👋<br><br>
+      I'm CAIO, the assistant for Caio Vieira's portfolio.<br><br>
+      I can help you quickly understand his experience, projects, and UX decisions.<br><br>
+      Feel free to talk to me in Portuguese or English — whatever you prefer 🙂
+    </div>
+  `;
+};async function send() {
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
 
