@@ -20,7 +20,7 @@ window.onload = function () {
 
   const userText = input.value;
 
-  messages.innerHTML += `<div class="msg user">${userText}</div>`;
+  messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
 
   input.value = "";
 
