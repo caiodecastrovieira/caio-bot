@@ -2,92 +2,305 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>C.A.I.O. 🤖</title>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --bg:        #0b0f1a;
+      --surface:   #111827;
+      --surface2:  #1a2235;
+      --border:    #1f2d42;
+      --accent:    #22c55e;
+      --accent-dim:#16a34a;
+      --text:      #e2e8f0;
+      --text-muted:#64748b;
+      --user-bg:   #22c55e;
+      --user-text: #052e16;
+      --radius:    12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      margin: 0;
-      padding: 0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
 
-    #chat {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
+    /* subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    h2 {
-      color: white;
-    }
-
-    #messages {
+    main {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 620px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 15px;
-      max-height: 70vh;
-      overflow-y: auto;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
     }
 
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .header-info h1 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    .header-info p {
+      font-size: 11px;
+      color: var(--accent);
+      font-family: 'IBM Plex Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      max-height: 65vh;
+      scroll-behavior: smooth;
+    }
+
+    #messages::-webkit-scrollbar       { width: 4px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
     .msg {
-      max-width: 75%;
+      max-width: 78%;
       padding: 10px 14px;
-      border-radius: 12px;
-      line-height: 1.4;
+      border-radius: var(--radius);
       font-size: 14px;
+      line-height: 1.55;
       white-space: pre-wrap;
+      word-break: break-word;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .bot {
-      background: #1e293b;
-      color: white;
+      background: var(--surface2);
+      color: var(--text);
       align-self: flex-start;
       border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
     }
 
     .user {
-      background: #22c55e;
-      color: black;
+      background: var(--user-bg);
+      color: var(--user-text);
       align-self: flex-end;
       border-bottom-right-radius: 4px;
+      font-weight: 500;
     }
 
+    /* Typing indicator */
+    .typing {
+      display: flex;
+      gap: 5px;
+      padding: 12px 16px;
+      align-items: center;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40%           { transform: translateY(-6px); }
+    }
+
+    /* ── Input area ── */
     #input-area {
       display: flex;
       gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
     }
 
-    input {
+    label.sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    #input {
       flex: 1;
-      padding: 10px;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      border: none;
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
     }
 
-    button {
-      padding: 10px 16px;
+    #input::placeholder { color: var(--text-muted); }
+
+    #input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+    }
+
+    #send-btn {
+      padding: 10px 18px;
+      background: var(--accent);
+      color: var(--user-text);
       border: none;
       border-radius: 8px;
-      background: #22c55e;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      flex-shrink: 0;
+    }
+
+    #send-btn:hover   { background: #16a34a; }
+    #send-btn:active  { transform: scale(0.97); }
+    #send-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    #send-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      main { border-radius: 12px; }
+      #messages { max-height: 58vh; padding: 14px; }
+      #input-area { padding: 12px 14px; }
     }
   </style>
 </head>
-
 <body>
-  <div id="chat">
-    <h2>C.A.I.O. 🤖</h2>
+  <main role="main" aria-label="Chat com C.A.I.O.">
+    <header>
+      <div class="avatar" aria-hidden="true">🤖</div>
+      <div class="header-info">
+        <h1>C.A.I.O.</h1>
+        <p><span class="status-dot"></span> online</p>
+      </div>
+    </header>
 
-    <div id="messages"></div>
+    <div
+      id="messages"
+      role="log"
+      aria-live="polite"
+      aria-label="Histórico de mensagens"
+    ></div>
 
     <div id="input-area">
-      <input id="input" placeholder="Pergunte algo..." />
-      <button onclick="send()">Enviar</button>
+      <label class="sr-only" for="input">Mensagem</label>
+      <input
+        id="input"
+        type="text"
+        placeholder="Pergunte algo…"
+        autocomplete="off"
+        aria-label="Digite sua mensagem"
+      />
+      <button id="send-btn" aria-label="Enviar mensagem">
+        Enviar
+      </button>
     </div>
-  </div>
+  </main>
 
   <script src="app.js"></script>
+  <script>
+    // Fallback: garantir envio com Enter caso app.js não implemente
+    document.getElementById('input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (typeof send === 'function') send();
+      }
+    });
+  </script>
 </body>
 </html>
