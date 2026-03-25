@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CAIO Bot</title>
+  <style>
+    body { font-family: Arial; background: #0f172a; color: white; }
+    #chat { max-width: 600px; margin: auto; padding: 20px; }
+    .msg { margin: 10px 0; }
+    .user { text-align: right; }
+    input { width: 80%; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <h2>CAIO 🤖</h2>
+    <div id="messages"></div>
+    <input id="input" placeholder="Pergunte algo..." />
+    <button onclick="send()">Enviar</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
