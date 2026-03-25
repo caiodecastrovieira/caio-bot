@@ -1,3 +1,8 @@
+// ── Histórico de conversa ───────────────────────────────────────────────────
+// Mantém o contexto entre mensagens para respostas mais coerentes
+
+const conversationHistory = [];
+
 // ── Utilitários ────────────────────────────────────────────────────────────
 
 function createMessage(text, role) {
@@ -16,18 +21,15 @@ function appendMessage(text, role) {
 }
 
 function scrollToBottom() {
-  const messages = document.getElementById("messages");
-  // requestAnimationFrame garante que o DOM já foi atualizado antes do scroll
   requestAnimationFrame(() => {
+    const messages = document.getElementById("messages");
     messages.scrollTop = messages.scrollHeight;
   });
 }
 
 function setLoading(isLoading) {
-  const btn = document.getElementById("send-btn");
-  const input = document.getElementById("input");
-  btn.disabled = isLoading;
-  input.disabled = isLoading;
+  document.getElementById("send-btn").disabled = isLoading;
+  document.getElementById("input").disabled = isLoading;
 }
 
 // ── Mensagem inicial ────────────────────────────────────────────────────────
@@ -36,7 +38,7 @@ function setLoading(isLoading) {
 
 // ── Enviar mensagem ─────────────────────────────────────────────────────────
 
-let isSending = false; // evita envios simultâneos
+let isSending = false;
 
 async function send() {
   if (isSending) return;
@@ -48,8 +50,9 @@ async function send() {
   isSending = true;
   setLoading(true);
 
-  // Mensagem do usuário (textContent = seguro contra XSS)
+  // Exibe e registra mensagem do usuário
   appendMessage(userText, "user");
+  conversationHistory.push({ role: "user", content: userText });
   input.value = "";
 
   // Indicador de loading
@@ -59,27 +62,28 @@ async function send() {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userText }),
+      // Envia o histórico completo para o servidor manter contexto
+      body: JSON.stringify({ history: conversationHistory }),
     });
 
     loading.remove();
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
     const reply = data.reply?.trim();
 
-    if (!reply) {
-      throw new Error("Resposta vazia");
-    }
+    if (!reply) throw new Error("Resposta vazia");
 
+    // Registra resposta no histórico e exibe
+    conversationHistory.push({ role: "assistant", content: reply });
     appendMessage(reply, "bot");
 
   } catch (err) {
     loading.remove();
     console.error("[C.A.I.O.]", err);
+    // Remove a última mensagem do histórico se houve erro
+    conversationHistory.pop();
     appendMessage("Tive um erro aqui 😅 Tenta de novo?", "bot");
 
   } finally {
@@ -90,7 +94,6 @@ async function send() {
 }
 
 // ── Enviar com Enter ────────────────────────────────────────────────────────
-// keydown substitui o deprecado keypress
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("input").addEventListener("keydown", (e) => {
