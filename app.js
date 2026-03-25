@@ -1,42 +1,87 @@
+// 👋 Mensagem inicial automática
 window.onload = function () {
-  const loading = document.createElement("div");
-loading.className = "msg bot";
-loading.innerText = "Huuum, deixa eu pensar...";
-messages.appendChild(loading);
+  const messages = document.getElementById("messages");
 
   messages.innerHTML += `
-    <div class="msg">
-      Olá, humano 👋<br><br>
-      Eu sou o C.A.I.O. (Currículo Automatizado Incrivelmente Otimizado), assistente do Caio Vieira!<br><br>
-      Posso te ajudar a entender a experiência dele, projetos e decisões de UX — de forma rápida e direta.<br><br>
-      Você pode falar comigo em português ou inglês, como preferir 🙂<br><br>
-      ---<br><br>
-      Hi there 👋<br><br>
-      I'm C.A.I.O. (Clever Automated Intelligent Operator), Caio Vieira's assistant!<br><br>
-      I can help you quickly understand his experience, projects, and UX decisions.<br><br>
-      Feel free to talk to me in Portuguese or English — whatever you prefer 🙂
+    <div class="msg bot">
+Olá, humano 👋
+
+Eu sou o C.A.I.O. (Currículo Automatizado Incrivelmente Otimizado), assistente do Caio Vieira.
+
+Posso te ajudar a entender a experiência dele, projetos e decisões de UX — de forma rápida e direta.
+
+Você pode falar comigo em português ou inglês, como preferir 🙂
+
+---
+
+Hi there 👋
+
+I'm C.A.I.O. (Conversational Assistant for Intelligent Operations), Caio Vieira's assistant.
+
+I can help you quickly understand his experience, projects, and UX decisions.
+
+Feel free to talk to me in Portuguese or English — whatever you prefer 🙂
     </div>
   `;
-  loading.remove();
-};async function send() {
+};
+
+// 💬 Enviar mensagem
+async function send() {
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
 
   const userText = input.value;
 
-  messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+  if (!userText) return;
+
+  // 👤 Mensagem do usuário
+  messages.innerHTML += `<div class="msg user">${userText}</div>`;
 
   input.value = "";
 
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message: userText }),
-  });
+  // 🤖 Loading
+  const loading = document.createElement("div");
+  loading.className = "msg bot";
+  loading.innerText = "CAIO está pensando...";
+  messages.appendChild(loading);
 
-  const data = await res.json();
+  // 🔽 Scroll automático
+  messages.scrollTop = messages.scrollHeight;
 
-  messages.innerHTML += `<div class="msg">${data.reply}</div>`;
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userText }),
+    });
+
+    const data = await res.json();
+
+    // remove loading
+    loading.remove();
+
+    // 🤖 resposta
+    messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+
+  } catch (error) {
+    loading.remove();
+
+    messages.innerHTML += `
+      <div class="msg bot">
+        Tive um erro aqui 😅 tenta de novo?
+      </div>
+    `;
+  }
+
+  // 🔽 Scroll automático
+  messages.scrollTop = messages.scrollHeight;
 }
+
+// ⌨️ Enviar com Enter
+document.getElementById("input").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    send();
+  }
+});
