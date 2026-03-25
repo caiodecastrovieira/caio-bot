@@ -13,16 +13,13 @@
       --surface2:  #1a2235;
       --border:    #1f2d42;
       --accent:    #22c55e;
-      --accent-dim:#16a34a;
       --text:      #e2e8f0;
       --text-muted:#64748b;
       --user-bg:   #22c55e;
       --user-text: #052e16;
       --radius:    12px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'IBM Plex Sans', sans-serif;
       background: var(--bg);
@@ -33,8 +30,6 @@
       justify-content: center;
       padding: 16px;
     }
-
-    /* subtle grid background */
     body::before {
       content: '';
       position: fixed;
@@ -47,7 +42,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
     main {
       position: relative;
       z-index: 1;
@@ -61,8 +55,6 @@
       overflow: hidden;
       box-shadow: 0 24px 64px rgba(0,0,0,0.5);
     }
-
-    /* ── Header ── */
     header {
       display: flex;
       align-items: center;
@@ -71,192 +63,100 @@
       border-bottom: 1px solid var(--border);
       background: var(--surface2);
     }
-
     .avatar {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       background: var(--accent);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
     }
-
     .header-info h1 {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: 0.05em;
+      font-size: 15px; font-weight: 600;
+      color: var(--text); letter-spacing: 0.05em;
     }
-
     .header-info p {
-      font-size: 11px;
-      color: var(--accent);
+      font-size: 11px; color: var(--accent);
       font-family: 'IBM Plex Mono', monospace;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      display: flex; align-items: center; gap: 5px;
     }
-
     .status-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
+      width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
       animation: pulse 2s ease-in-out infinite;
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-
-    /* ── Messages ── */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
     #messages {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 20px;
-      overflow-y: auto;
-      max-height: 65vh;
-      scroll-behavior: smooth;
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 20px; overflow-y: auto;
+      max-height: 65vh; scroll-behavior: smooth;
     }
-
     #messages::-webkit-scrollbar       { width: 4px; }
     #messages::-webkit-scrollbar-track { background: transparent; }
     #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
     .msg {
-      max-width: 78%;
-      padding: 10px 14px;
+      max-width: 78%; padding: 10px 14px;
       border-radius: var(--radius);
-      font-size: 14px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-      animation: fadeIn 0.2s ease;
+      font-size: 14px; line-height: 1.55;
+      white-space: pre-wrap; word-break: break-word;
+      animation: fadeIn .2s ease;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
     .bot {
-      background: var(--surface2);
-      color: var(--text);
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
+      background: var(--surface2); color: var(--text);
+      align-self: flex-start; border-bottom-left-radius: 4px;
       border: 1px solid var(--border);
     }
-
     .user {
-      background: var(--user-bg);
-      color: var(--user-text);
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
+      background: var(--user-bg); color: var(--user-text);
+      align-self: flex-end; border-bottom-right-radius: 4px;
       font-weight: 500;
     }
-
-    /* Typing indicator */
-    .typing {
-      display: flex;
-      gap: 5px;
-      padding: 12px 16px;
-      align-items: center;
-    }
-
+    .typing { display:flex; gap:5px; padding:12px 16px; align-items:center; }
     .typing span {
-      width: 6px;
-      height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: bounce 1.2s ease-in-out infinite;
+      width:6px; height:6px; background:var(--accent);
+      border-radius:50%; animation:bounce 1.2s ease-in-out infinite;
     }
-
-    .typing span:nth-child(2) { animation-delay: 0.2s; }
-    .typing span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes bounce {
-      0%, 80%, 100% { transform: translateY(0); }
-      40%           { transform: translateY(-6px); }
-    }
-
-    /* ── Input area ── */
+    .typing span:nth-child(2){animation-delay:.2s}
+    .typing span:nth-child(3){animation-delay:.4s}
+    @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
     #input-area {
-      display: flex;
-      gap: 10px;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: var(--surface2);
+      display:flex; gap:10px; padding:16px 20px;
+      border-top:1px solid var(--border); background:var(--surface2);
     }
-
     label.sr-only {
-      position: absolute;
-      width: 1px; height: 1px;
-      padding: 0; margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
+      position:absolute; width:1px; height:1px;
+      padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); white-space:nowrap; border:0;
     }
-
     #input {
-      flex: 1;
-      padding: 10px 14px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
+      flex:1; padding:10px 14px;
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:8px; color:var(--text);
+      font-family:'IBM Plex Sans',sans-serif;
+      font-size:14px; outline:none; transition:border-color .2s;
     }
-
-    #input::placeholder { color: var(--text-muted); }
-
+    #input::placeholder { color:var(--text-muted); }
     #input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(34,197,94,.12);
     }
-
     #send-btn {
-      padding: 10px 18px;
-      background: var(--accent);
-      color: var(--user-text);
-      border: none;
-      border-radius: 8px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      flex-shrink: 0;
+      padding:10px 18px; background:var(--accent);
+      color:var(--user-text); border:none; border-radius:8px;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:13px; font-weight:600; cursor:pointer;
+      transition:background .2s,transform .1s; flex-shrink:0;
     }
-
-    #send-btn:hover   { background: #16a34a; }
-    #send-btn:active  { transform: scale(0.97); }
-    #send-btn:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    #send-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 480px) {
-      main { border-radius: 12px; }
-      #messages { max-height: 58vh; padding: 14px; }
-      #input-area { padding: 12px 14px; }
+    #send-btn:hover  { background:#16a34a; }
+    #send-btn:active { transform:scale(.97); }
+    #send-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    #send-btn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+    @media(max-width:480px){
+      main{border-radius:12px}
+      #messages{max-height:58vh;padding:14px}
+      #input-area{padding:12px 14px}
     }
   </style>
 </head>
@@ -269,82 +169,54 @@
         <p><span class="status-dot"></span> online</p>
       </div>
     </header>
-
-    <div
-      id="messages"
-      role="log"
-      aria-live="polite"
-      aria-label="Histórico de mensagens"
-    ></div>
-
+    <div id="messages" role="log" aria-live="polite" aria-label="Histórico de mensagens"></div>
     <div id="input-area">
       <label class="sr-only" for="input">Mensagem</label>
-      <input
-        id="input"
-        type="text"
-        placeholder="Pergunte algo…"
-        autocomplete="off"
-        aria-label="Digite sua mensagem"
-      />
-      <button id="send-btn" aria-label="Enviar mensagem">
-        Enviar
-      </button>
+      <input id="input" type="text" placeholder="Pergunte algo…" autocomplete="off" aria-label="Digite sua mensagem" />
+      <button id="send-btn" aria-label="Enviar mensagem">Enviar</button>
     </div>
   </main>
 
   <script src="app.js"></script>
   <script>
-    // ── i18n: placeholder e aria-label por idioma ──────────────────────────
-    const PLACEHOLDERS = {
-      'pt': 'Pergunte algo…',
-      'en': 'Ask me anything…',
-      'es': 'Pregunta algo…',
-      'fr': 'Posez une question…',
-      'de': 'Stell eine Frage…',
-      'it': 'Fai una domanda…',
-      'ja': '何か聞いてください…',
-      'zh': '请输入您的问题…',
-      'ko': '질문을 입력하세요…',
-      'ru': 'Задайте вопрос…',
-      'ar': '…اكتب سؤالك',
-      'hi': 'कुछ पूछें…',
-      'nl': 'Stel een vraag…',
-      'pl': 'Zadaj pytanie…',
-      'tr': 'Bir şey sor…',
-      'sv': 'Ställ en fråga…',
-      'default': 'Ask me anything…',
+    const I18N = {
+      pt:      { placeholder: 'Pergunte algo…',   welcome: 'Olá! Eu sou o C.A.I.O. 🤖\nComo posso te ajudar hoje?' },
+      en:      { placeholder: 'Ask me anything…', welcome: "Hi there! I'm C.A.I.O. 🤖\nHow can I help you today?" },
+      es:      { placeholder: 'Pregunta algo…',   welcome: '¡Hola! Soy C.A.I.O. 🤖\n¿En qué puedo ayudarte hoy?' },
+      default: { placeholder: 'Ask me anything…', welcome: "Hi there! I'm C.A.I.O. 🤖\nHow can I help you today?" },
     };
 
-    function detectLang() {
-      // navigator.languages retorna array ordenado por preferência
-      const langs = navigator.languages?.length
-        ? navigator.languages
-        : [navigator.language || 'en'];
+    const RTL = ['ar','he','fa','ur'];
 
-      for (const lang of langs) {
-        const code = lang.split('-')[0].toLowerCase(); // "pt-BR" → "pt"
-        if (PLACEHOLDERS[code]) return code;
+    function detectLang() {
+      const langs = navigator.languages?.length ? navigator.languages : [navigator.language || 'en'];
+      for (const l of langs) {
+        const code = l.split('-')[0].toLowerCase();
+        if (I18N[code]) return code;
       }
       return 'default';
     }
 
-    function applyPlaceholder() {
-      const input = document.getElementById('input');
-      const lang  = detectLang();
-      const text  = PLACEHOLDERS[lang];
-
-      input.placeholder = text;
-      input.setAttribute('aria-label', text);
-
-      // Ajusta direção para idiomas RTL
-      const rtl = ['ar', 'he', 'fa', 'ur'];
-      input.dir = rtl.includes(lang) ? 'rtl' : 'ltr';
+    function addMessage(text, role) {
+      const box = document.getElementById('messages');
+      const div = document.createElement('div');
+      div.classList.add('msg', role);
+      div.textContent = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
     }
 
-    applyPlaceholder();
+    (function init() {
+      const input = document.getElementById('input');
+      const lang  = detectLang();
+      const t     = I18N[lang];
+      input.placeholder = t.placeholder;
+      input.setAttribute('aria-label', t.placeholder);
+      input.dir = RTL.includes(lang) ? 'rtl' : 'ltr';
+      addMessage(t.welcome, 'bot');
+    })();
 
-    // ── Envio com Enter ────────────────────────────────────────────────────
-    document.getElementById('input').addEventListener('keydown', (e) => {
+    document.getElementById('input').addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         if (typeof send === 'function') send();
