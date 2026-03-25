@@ -1,13 +1,12 @@
-// server.js — exemplo de referência (Node.js + Express)
-// Mostra como integrar o system prompt do C.A.I.O. com a API da Anthropic
+// server.js — Node.js + Express + OpenAI
 
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import express from "express";
 
 const app = express();
 app.use(express.json());
 
-const client = new Anthropic(); // usa ANTHROPIC_API_KEY do ambiente
+const openai = new OpenAI(); // usa OPENAI_API_KEY do ambiente
 
 // ── System prompt ───────────────────────────────────────────────────────────
 
@@ -99,18 +98,18 @@ app.post("/api/chat", async (req, res) => {
   }
 
   try {
-    const response = await client.messages.create({
-      model: "claude-opus-4-5",
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",        // troque por "gpt-4o" se quiser mais capacidade
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: history, // [{ role: "user"|"assistant", content: "..." }]
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...history,                // [{ role: "user"|"assistant", content: "..." }]
+      ],
     });
 
-    const reply = response.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join("\n")
-      .trim();
+    const reply = response.choices[0]?.message?.content?.trim();
+
+    if (!reply) throw new Error("Resposta vazia da OpenAI.");
 
     res.json({ reply });
 
