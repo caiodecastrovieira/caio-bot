@@ -17,6 +17,7 @@ messages.appendChild(loading);
       Feel free to talk to me in Portuguese or English — whatever you prefer 🙂
     </div>
   `;
+  loading.remove();
 };async function send() {
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
