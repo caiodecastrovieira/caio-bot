@@ -1,87 +1,102 @@
-// 👋 Mensagem inicial automática
-window.onload = function () {
+// ── Utilitários ────────────────────────────────────────────────────────────
+
+function createMessage(text, role) {
+  const div = document.createElement("div");
+  div.className = `msg ${role}`;
+  div.textContent = text;
+  return div;
+}
+
+function appendMessage(text, role) {
   const messages = document.getElementById("messages");
+  const div = createMessage(text, role);
+  messages.appendChild(div);
+  scrollToBottom();
+  return div;
+}
 
-  messages.innerHTML += `
-    <div class="msg bot">
-Olá, humano 👋
+function scrollToBottom() {
+  const messages = document.getElementById("messages");
+  // requestAnimationFrame garante que o DOM já foi atualizado antes do scroll
+  requestAnimationFrame(() => {
+    messages.scrollTop = messages.scrollHeight;
+  });
+}
 
-Eu sou o C.A.I.O. (Currículo Automatizado Incrivelmente Otimizado), assistente do Caio Vieira.
-
-Posso te ajudar a entender a experiência dele, projetos e decisões de UX — de forma rápida e direta.
-
-Você pode falar comigo em português ou inglês, como preferir 🙂
-
----
-
-Hi there 👋
-
-I'm C.A.I.O. (Conversational Assistant for Intelligent Operations), Caio Vieira's assistant.
-
-I can help you quickly understand his experience, projects, and UX decisions.
-
-Feel free to talk to me in Portuguese or English — whatever you prefer 🙂
-    </div>
-  `;
-};
-
-// 💬 Enviar mensagem
-async function send() {
+function setLoading(isLoading) {
+  const btn = document.getElementById("send-btn");
   const input = document.getElementById("input");
-  const messages = document.getElementById("messages");
+  btn.disabled = isLoading;
+  input.disabled = isLoading;
+}
 
-  const userText = input.value;
+// ── Mensagem inicial ────────────────────────────────────────────────────────
+// A mensagem de boas-vindas é gerada pelo sistema i18n do index.html.
+// Este arquivo não duplica essa lógica.
 
+// ── Enviar mensagem ─────────────────────────────────────────────────────────
+
+let isSending = false; // evita envios simultâneos
+
+async function send() {
+  if (isSending) return;
+
+  const input = document.getElementById("input");
+  const userText = input.value.trim();
   if (!userText) return;
 
-  // 👤 Mensagem do usuário
-  messages.innerHTML += `<div class="msg user">${userText}</div>`;
+  isSending = true;
+  setLoading(true);
 
+  // Mensagem do usuário (textContent = seguro contra XSS)
+  appendMessage(userText, "user");
   input.value = "";
 
-  // 🤖 Loading
-  const loading = document.createElement("div");
-  loading.className = "msg bot";
-  loading.innerText = "CAIO está pensando...";
-  messages.appendChild(loading);
-
-  // 🔽 Scroll automático
-  messages.scrollTop = messages.scrollHeight;
+  // Indicador de loading
+  const loading = appendMessage("C.A.I.O. está pensando...", "bot");
 
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: userText }),
     });
 
+    loading.remove();
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
     const data = await res.json();
+    const reply = data.reply?.trim();
 
-    // remove loading
+    if (!reply) {
+      throw new Error("Resposta vazia");
+    }
+
+    appendMessage(reply, "bot");
+
+  } catch (err) {
     loading.remove();
+    console.error("[C.A.I.O.]", err);
+    appendMessage("Tive um erro aqui 😅 Tenta de novo?", "bot");
 
-    // 🤖 resposta
-    messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
-
-  } catch (error) {
-    loading.remove();
-
-    messages.innerHTML += `
-      <div class="msg bot">
-        Tive um erro aqui 😅 tenta de novo?
-      </div>
-    `;
+  } finally {
+    isSending = false;
+    setLoading(false);
+    input.focus();
   }
-
-  // 🔽 Scroll automático
-  messages.scrollTop = messages.scrollHeight;
 }
 
-// ⌨️ Enviar com Enter
-document.getElementById("input").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    send();
-  }
+// ── Enviar com Enter ────────────────────────────────────────────────────────
+// keydown substitui o deprecado keypress
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
 });
